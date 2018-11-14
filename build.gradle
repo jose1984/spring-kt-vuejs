@@ -1,0 +1,82 @@
+buildscript {
+	ext {
+		kotlinVersion = '1.2.71'
+		springBootVersion = '2.1.0.RELEASE'
+		gradleNodeVersion = '1.2.0'
+	}
+	repositories {
+		mavenCentral()
+		maven { url "https://repo.grails.org/grails/core" }
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+		classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
+		classpath("org.jetbrains.kotlin:kotlin-noarg:${kotlinVersion}")
+		classpath("com.moowork.gradle:gradle-node-plugin:${gradleNodeVersion}")
+	}
+}
+
+apply plugin: 'kotlin'
+apply plugin: 'kotlin-spring'
+apply plugin: 'kotlin-jpa'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'com.moowork.node'
+
+group = 'es.jadel.web'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+compileKotlin {
+	kotlinOptions {
+		freeCompilerArgs = ["-Xjsr305=strict"]
+		jvmTarget = "1.8"
+	}
+}
+compileTestKotlin {
+	kotlinOptions {
+		freeCompilerArgs = ["-Xjsr305=strict"]
+		jvmTarget = "1.8"
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+
+dependencies {
+	implementation('org.springframework.boot:spring-boot-starter-web')
+	implementation('org.springframework.boot:spring-boot-starter-data-rest')
+	implementation('org.springframework.boot:spring-boot-starter-data-jpa')
+	implementation('com.fasterxml.jackson.module:jackson-module-kotlin')
+	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	runtime('com.h2database:h2')
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
+}
+
+node {
+	version = '8.12.0'
+	download = true
+	nodeModulesDir = file('src/main/ui')
+}
+
+task buildClient(type: NpmTask, dependsOn: 'npmInstall') {
+	group = 'build'
+	description = 'Compile client side assets for production'
+	args = ['run', 'build']
+
+	doLast {
+		ant.move  file: "${projectDir}/src/main/ui/dist/",
+				toFile: "${projectDir}/src/main/resources/static"
+	}
+}
+
+task cleanBuild(type: Delete) {
+	delete "${projectDir}/src/main/resources/static", "${projectDir}/src/main/ui/node_modules/"
+}
+
+bootJar.dependsOn buildClient
+clean.dependsOn cleanBuild
