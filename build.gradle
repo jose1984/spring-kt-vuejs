@@ -24,6 +24,7 @@ apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'com.moowork.node'
+apply plugin: 'war'
 
 group = 'es.jadel.web'
 version = '0.0.1-SNAPSHOT'
@@ -79,4 +80,5 @@ task cleanBuild(type: Delete) {
 }
 
 bootJar.dependsOn buildClient
+bootWar.dependsOn buildClient
 clean.dependsOn cleanBuild
