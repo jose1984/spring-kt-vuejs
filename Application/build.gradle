@@ -26,6 +26,12 @@ apply plugin: 'io.spring.dependency-management'
 apply plugin: 'com.moowork.node'
 apply plugin: 'war'
 
+
+war {
+	archiveName = 'ROOT.war'
+}
+
+
 group = 'es.jadel.web'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
@@ -45,7 +51,6 @@ compileTestKotlin {
 repositories {
 	mavenCentral()
 }
-
 
 dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-web')
@@ -80,8 +85,15 @@ task buildClient(type: NpmTask, dependsOn: 'npmInstall') {
 	}
 }
 
-task cleanBuild(type: Delete) {
+task cleanBuild(type: Delete, dependsOn: 'build') {
 	delete "${projectDir}/src/main/resources/static", "${projectDir}/ui/node_modules/"
+}
+
+
+task renameWar(type: Copy) {
+	group = 'build'
+	description = 'Rename war file name for tomcat deployment'
+	file("${buildDir}/libs/vue-workshop-0.0.1-SNAPSHOT.war").renameTo(file("${buildDir}/libs/ROOT.war"))
 }
 
 bootJar.dependsOn buildClient
