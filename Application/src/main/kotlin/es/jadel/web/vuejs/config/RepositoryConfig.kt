@@ -7,7 +7,7 @@ import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurerAdapt
 
 @Configuration
 class RepositoryConfig : RepositoryRestConfigurerAdapter() {
-    override fun configureRepositoryRestConfiguration(config: RepositoryRestConfiguration?) {
-        config!!.exposeIdsFor(Todo::class.java)
+    override fun configureRepositoryRestConfiguration(config: RepositoryRestConfiguration) {
+        config.exposeIdsFor(Todo::class.java)
     }
 }

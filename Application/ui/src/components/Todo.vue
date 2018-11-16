@@ -3,12 +3,15 @@
     <h1>{{ message }}</h1>
 
     <input type="text" v-model="newTodo">
-    <button v-on:click="addTodo">Add</button>
+    <button v-on:click="addTodo" :disabled="!newTodo">Add</button>
 
-    <todo-item v-for="todo in todos"
-        v-bind:todo="todo"
-        v-bind:key="todo.id"
-        v-on:completed="onCompleted(todo)"></todo-item>
+    <p>
+        <todo-item v-for="todo in todos"
+            v-bind:todo="todo"
+            v-bind:key="todo.id"
+            v-on:completed="onCompleted(todo)"
+            v-on:remove="onRemove(todo)"></todo-item>
+    </p>
   </div>
 </template>
 
@@ -43,6 +46,15 @@ export default {
             .then(response => console.log('Success:', JSON.stringify(response)))
             .catch(error => console.error('Error:', error))
       },
+      onRemove: function (todo) {
+           fetch(`todos/${todo.id}`, {
+             method: 'DELETE',
+             headers: {
+               'Content-Type': 'application/json'
+             }
+           }).then(response => this.fetchTodos())
+             .catch(error => console.error('Error:', error))
+        },
       addTodo: function () {
         const postTodo = {
             title: this.newTodo

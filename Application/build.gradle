@@ -60,7 +60,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	runtime('com.h2database:h2')
-    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
 
@@ -80,8 +80,7 @@ task buildClient(type: NpmTask, dependsOn: 'npmInstall') {
     }
 
 	doLast {
-		ant.move  file: "${projectDir}/ui/dist/",
-				toFile: "${projectDir}/src/main/resources/static"
+		file("${projectDir}/ui/dist").renameTo("${projectDir}/src/main/resources/static")
 	}
 }
 

@@ -1,10 +1,9 @@
 <template>
-  <div class="todo-item">
-    <li>
+    <li class="todo-item">
         <input type="checkbox" :id="todo.id" v-model="todo.completed" @change="todoCompleted">
         <label :for="todo.id">{{ todo.title }}</label>
+        <button @click="todoRemove">Remove</button>
     </li>
-  </div>
 </template>
 
 <script>
@@ -13,8 +12,19 @@ export default {
   props: ['todo'],
   methods: {
       todoCompleted: function () {
-          this.$emit('completed')
+        this.$emit('completed')
+      },
+      todoRemove: function () {
+        this.$emit('remove')
       }
   }
 }
 </script>
+
+<style scoped>
+
+label {
+    margin-right: 1em;
+}
+
+</style>
